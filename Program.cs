@@ -31,7 +31,7 @@ namespace Fas2Uppgift1V2_Grupp1
                 "Type 'quit' to quit, type 'help' for help!");
 
             string command = "";
-            string[] commandWords;            
+            string[] commandWords;
             List<TodoTask> todoList = new List<TodoTask>();
             string file = "";
 
@@ -40,7 +40,7 @@ namespace Fas2Uppgift1V2_Grupp1
                 Console.Write("> ");
                 command = Console.ReadLine();
                 commandWords = command.Split(' ');
-                
+
                 if (command == "quit")
                 {
                     Console.WriteLine("Bye");
@@ -53,15 +53,11 @@ namespace Fas2Uppgift1V2_Grupp1
                 {
                     file = commandWords[1];
                     todoList.AddRange(LoadFile(file));
+                    ShowList(todoList);
                 }
                 else if (command == "show")
                 {
-                    int listPos = 1;
-                    foreach (TodoTask todo in todoList)
-                    {
-                        Console.WriteLine($"{listPos}. {todo.date} - {todo.state} - {todo.description}");
-                        listPos++;
-                    }
+                    ShowList(todoList);
                 }
                 else if (commandWords[0] == "add")
                 {
@@ -69,65 +65,85 @@ namespace Fas2Uppgift1V2_Grupp1
                 }
                 else if (commandWords[0] == "delete")
                 {
-                    for (int i = 0; i < todoList.Count(); i++)
-                    {
-                        int listPos = i + 1;
-                        if (listPos == int.Parse(commandWords[1]))
-                        {
-                            todoList.RemoveAt(i);
-                        }
-                    }
+                    DeleteTodoTask(commandWords, todoList);
                 }
                 else if (commandWords[0] == "set")
                 {
-                    if (commandWords[2] == "avklarad")
-                    {
-                        todoList[int.Parse(commandWords[1]) - 1].state = "*";
-                    }
-                    else if (commandWords[2] == "pågående")
-                    {
-                        todoList[int.Parse(commandWords[1]) - 1].state = "p";
-                    }
+                    SetState(commandWords, todoList);
                 }
                 else if (commandWords[0] == "move")
                 {
                     int index = int.Parse(commandWords[1]) - 1;
-                    NewMethod(commandWords, todoList, index);
+                    MoveTodoTask(commandWords[2], todoList, index);
                 }
                 else if (command == "save")
                 {
-                    using (StreamWriter sw = new StreamWriter(file))
-                    {
-                        foreach (TodoTask task in todoList)
-                        {
-                            sw.WriteLine($"{task.date}#{task.state}#{task.description}");
-                        }
-                    }
+                    SaveListToFile(todoList, file);
                 }
                 else if (commandWords[0] == "save")
                 {
                     file = commandWords[1]; // C:\Users\Admin\Desktop
-                    using (StreamWriter sw = new StreamWriter(file))
-                    {
-                        foreach (TodoTask task in todoList)
-                        {
-                            sw.WriteLine($"{task.date}#{task.state}#{task.description}");
-                        }
-                    }
+                    SaveListToFile(todoList, file);
                 }
 
             } while (command.ToLower() != "quit");
 
         }
 
-        private static void NewMethod(string[] commandWords, List<TodoTask> todoList, int index)
+        #region Methods
+        private static void DeleteTodoTask(string[] commandWords, List<TodoTask> todoList)
         {
-            if (commandWords[2] == "down")
+            for (int i = 0; i < todoList.Count(); i++)
+            {
+                int listPos = i + 1;
+                if (listPos == int.Parse(commandWords[1]))
+                {
+                    todoList.RemoveAt(i);
+                }
+            }
+        }
+
+        private static void ShowList(List<TodoTask> todoList)
+        {
+            int listPos = 1;
+            foreach (TodoTask todo in todoList)
+            {
+                Console.WriteLine($"{listPos}. {todo.date} - {todo.state} - {todo.description}");
+                listPos++;
+            }
+        }
+
+        private static void SetState(string[] commandWords, List<TodoTask> todoList)
+        {
+            if (commandWords[2] == "avklarad")
+            {
+                todoList[int.Parse(commandWords[1]) - 1].state = "*";
+            }
+            else if (commandWords[2] == "pågående")
+            {
+                todoList[int.Parse(commandWords[1]) - 1].state = "p";
+            }
+        }
+
+        private static void SaveListToFile(List<TodoTask> todoList, string file)
+        {
+            using (StreamWriter sw = new StreamWriter(file))
+            {
+                foreach (TodoTask task in todoList)
+                {
+                    sw.WriteLine($"{task.date}#{task.state}#{task.description}");
+                }
+            }
+        }
+
+        private static void MoveTodoTask(string direction, List<TodoTask> todoList, int index)
+        {
+            if (direction == "down")
             {
                 todoList.Insert(index + 2, todoList[index]);
                 todoList.RemoveAt(index);
             }
-            else if (commandWords[2] == "up" && index != 0)
+            else if (direction == "up" && index != 0)
             {
                 todoList.Insert(index - 1, todoList[index]);
                 todoList.RemoveAt(index + 1);
@@ -153,14 +169,13 @@ namespace Fas2Uppgift1V2_Grupp1
             List<TodoTask> todoList = new List<TodoTask>();
             string[] fileLine;
 
-            using(StreamReader sr = new StreamReader(@filePath))
+            using (StreamReader sr = new StreamReader(@filePath))
             {
                 while (sr.Peek() >= 0)
                 {
                     fileLine = sr.ReadLine().Split('#');
                     TodoTask newTask = new TodoTask(fileLine[0], fileLine[1], fileLine[2]);
-                    todoList.Add(newTask);
-                    Console.WriteLine($"{newTask.date} - {newTask.state} - {newTask.description}");
+                    todoList.Add(newTask);           
                 }
             }
 
@@ -170,17 +185,17 @@ namespace Fas2Uppgift1V2_Grupp1
         static void PrintHelp()
         {
             Console.WriteLine("Help commands: \n" +
-                "<load> <filepath> -- loads the todofile \n" +
-                "<add> <todoTask> -- add new todo task\n" +
-                "<delete> -- deletes todo from list\n" +
-                "<save> -- saves list to current file\n" +
-                "<save> <filepath> -- saves list to specific file path\n" +
-                "<move> <number> <up/down> -- moves todo task position in list\n" +
-                "<set> <taskNo> <state> -- set state for todo task\n" +
-                "<show> -- shows todo list"
+                "'load' <filepath> -- loads the todofile \n" +
+                "'add <todoTask>' -- add new todo task\n" +
+                "'delete' -- deletes todo from list\n" +
+                "'save'-- saves list to current file\n" +
+                "'save <filepath>' -- saves list to specific file path\n" +
+                "'move <number> <up/down>' -- moves todo task position in list\n" +
+                "'set <taskNo> <state>' -- set state for todo task\n" +
+                "'show' -- shows todo list"
                 );
         }
-
+        #endregion
 
     }
 }
