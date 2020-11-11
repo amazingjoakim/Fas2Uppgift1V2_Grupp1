@@ -11,12 +11,12 @@ namespace Fas2Uppgift1V2_Grupp1
     {
         class TodoTask
         {
+            /* CLASS: TodoTask
+               PURPOSE: a todo entry in todo list
+            */
+
             public string date, state, description;
 
-            public TodoTask()
-            {
-
-            }
             public TodoTask(string date, string state, string description)
             {
                 this.date = date;
@@ -30,11 +30,13 @@ namespace Fas2Uppgift1V2_Grupp1
             Console.WriteLine("Welcome to the todo list!\n" +
                 "Type 'quit' to quit, type 'help' for help!");
 
+            //Variable Declarations
             string command = "";
             string[] commandWords;
             List<TodoTask> todoList = new List<TodoTask>();
             string file = "";
 
+            //Command Prompt
             do
             {
                 Console.Write("> ");
@@ -59,10 +61,11 @@ namespace Fas2Uppgift1V2_Grupp1
                 }
                 else if (commandWords[0] == "load")
                 {
+                    //TBD try/catch
                     file = commandWords[1];
                     todoList.AddRange(LoadFile(file));
                     ShowList(todoList);
-                } 
+                }
                 else if (commandWords[0] == "add")
                 {
                     todoList.Add(AddTodoTask(commandWords));
@@ -79,11 +82,15 @@ namespace Fas2Uppgift1V2_Grupp1
                 {
                     int index = int.Parse(commandWords[1]) - 1;
                     MoveTodoTask(commandWords[2], todoList, index);
-                }               
+                }
                 else if (commandWords[0] == "save")
                 {
-                    file = commandWords[1]; // C:\Users\Admin\Desktop
+                    file = commandWords[1];
                     SaveListToFile(todoList, file);
+                }
+                else
+                {
+                    Console.WriteLine("Unknown command");
                 }
 
             } while (command.ToLower() != "quit");
@@ -93,6 +100,14 @@ namespace Fas2Uppgift1V2_Grupp1
         #region Methods
         private static void DeleteTodoTask(string[] commandWords, List<TodoTask> todoList)
         {
+            /* 
+               METHOD: DeleteTodoTask (static)
+               PURPOSE: Remove todo entry from todo list
+               PARAMETERS: string[commandWords] - get todo entry position. List<TodoTask> todo list- the todo list to remove todo entry from
+               RETURN VALUE: none
+            */
+
+            //TBD try/catch if number is not in list
             for (int i = 0; i < todoList.Count(); i++)
             {
                 int listPos = i + 1;
@@ -105,6 +120,7 @@ namespace Fas2Uppgift1V2_Grupp1
 
         private static void ShowList(List<TodoTask> todoList)
         {
+            //TBD - inform user if list is empty
             int listPos = 1;
             foreach (TodoTask todo in todoList)
             {
@@ -127,7 +143,8 @@ namespace Fas2Uppgift1V2_Grupp1
 
         private static void SaveListToFile(List<TodoTask> todoList, string file)
         {
-            using (StreamWriter sw = new StreamWriter(file))
+            //TBD try/catch to avoid error
+            using (StreamWriter sw = new StreamWriter(file)) // opens a stream to file and creates a writer
             {
                 foreach (TodoTask task in todoList)
                 {
@@ -138,6 +155,7 @@ namespace Fas2Uppgift1V2_Grupp1
 
         private static void MoveTodoTask(string direction, List<TodoTask> todoList, int index)
         {
+            //TBD try/catch
             if (direction == "down")
             {
                 todoList.Insert(index + 2, todoList[index]);
@@ -169,13 +187,14 @@ namespace Fas2Uppgift1V2_Grupp1
             List<TodoTask> todoList = new List<TodoTask>();
             string[] fileLine;
 
+            //TBD try/catch, if input is incorrect
             using (StreamReader sr = new StreamReader(@filePath))
             {
                 while (sr.Peek() >= 0)
                 {
                     fileLine = sr.ReadLine().Split('#');
                     TodoTask newTask = new TodoTask(fileLine[0], fileLine[1], fileLine[2]);
-                    todoList.Add(newTask);           
+                    todoList.Add(newTask);
                 }
             }
 
