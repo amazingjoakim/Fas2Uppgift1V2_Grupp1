@@ -49,16 +49,20 @@ namespace Fas2Uppgift1V2_Grupp1
                 {
                     PrintHelp();
                 }
-                else if (commandWords[0] == "load")
+                else if (command == "save")
                 {
-                    file = commandWords[1];
-                    todoList.AddRange(LoadFile(file));
-                    ShowList(todoList);
+                    SaveListToFile(todoList, file);
                 }
                 else if (command == "show")
                 {
                     ShowList(todoList);
                 }
+                else if (commandWords[0] == "load")
+                {
+                    file = commandWords[1];
+                    todoList.AddRange(LoadFile(file));
+                    ShowList(todoList);
+                } 
                 else if (commandWords[0] == "add")
                 {
                     todoList.Add(AddTodoTask(commandWords));
@@ -75,11 +79,7 @@ namespace Fas2Uppgift1V2_Grupp1
                 {
                     int index = int.Parse(commandWords[1]) - 1;
                     MoveTodoTask(commandWords[2], todoList, index);
-                }
-                else if (command == "save")
-                {
-                    SaveListToFile(todoList, file);
-                }
+                }               
                 else if (commandWords[0] == "save")
                 {
                     file = commandWords[1]; // C:\Users\Admin\Desktop
