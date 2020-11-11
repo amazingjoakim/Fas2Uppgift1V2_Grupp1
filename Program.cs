@@ -33,13 +33,14 @@ namespace Fas2Uppgift1V2_Grupp1
             string command = "";
             string[] commandWords;            
             List<TodoTask> todoList = new List<TodoTask>();
+            string file = "";
 
             do
             {
                 Console.Write("> ");
                 command = Console.ReadLine();
                 commandWords = command.Split(' ');
-
+                
                 if (command == "quit")
                 {
                     Console.WriteLine("Bye");
@@ -50,7 +51,7 @@ namespace Fas2Uppgift1V2_Grupp1
                 }
                 else if (commandWords[0] == "load")
                 {
-                    string file = commandWords[1];
+                    file = commandWords[1];
                     todoList.AddRange(LoadFile(file));
                 }
                 else if (command == "show")
@@ -89,33 +90,52 @@ namespace Fas2Uppgift1V2_Grupp1
                     }
                 }
                 else if (commandWords[0] == "move")
-                {                   
-                    if (commandWords[2] == "up")
-                    {
-                        int oldIndex = int.Parse(commandWords[1]) -1;
-                        int newIndex = oldIndex - 1;
-
-                        TodoTask tempTodoTask = todoList[newIndex];
-                        todoList[newIndex] = todoList[oldIndex];
-                        todoList[oldIndex] = tempTodoTask;
-                    }
-                    else if (commandWords[2] == "down")
-                    {
-                        int oldIndex = int.Parse(commandWords[1]) - 1;
-                        int newIndex = oldIndex + 1;
-
-                        TodoTask tempTodoTask = todoList[newIndex];
-                        todoList[newIndex] = todoList[oldIndex];
-                        todoList[oldIndex] = tempTodoTask;
-                    }
+                {
+                    int index = int.Parse(commandWords[1]) - 1;
+                    NewMethod(commandWords, todoList, index);
                 }
                 else if (command == "save")
                 {
-
+                    using (StreamWriter sw = new StreamWriter(file))
+                    {
+                        foreach (TodoTask task in todoList)
+                        {
+                            sw.WriteLine($"{task.date}#{task.state}#{task.description}");
+                        }
+                    }
+                }
+                else if (commandWords[0] == "save")
+                {
+                    file = commandWords[1]; // C:\Users\Admin\Desktop
+                    using (StreamWriter sw = new StreamWriter(file))
+                    {
+                        foreach (TodoTask task in todoList)
+                        {
+                            sw.WriteLine($"{task.date}#{task.state}#{task.description}");
+                        }
+                    }
                 }
 
             } while (command.ToLower() != "quit");
 
+        }
+
+        private static void NewMethod(string[] commandWords, List<TodoTask> todoList, int index)
+        {
+            if (commandWords[2] == "down")
+            {
+                todoList.Insert(index + 2, todoList[index]);
+                todoList.RemoveAt(index);
+            }
+            else if (commandWords[2] == "up" && index != 0)
+            {
+                todoList.Insert(index - 1, todoList[index]);
+                todoList.RemoveAt(index + 1);
+            }
+            else
+            {
+                Console.WriteLine("Fel kommando");
+            }
         }
 
         private static TodoTask AddTodoTask(string[] commandWords)
