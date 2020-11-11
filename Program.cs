@@ -11,7 +11,8 @@ namespace Fas2Uppgift1V2_Grupp1
     {
         class TodoTask
         {
-            /* CLASS: TodoTask
+            /* 
+               CLASS: TodoTask
                PURPOSE: a todo entry in todo list
             */
 
@@ -80,8 +81,8 @@ namespace Fas2Uppgift1V2_Grupp1
                 }
                 else if (commandWords[0] == "move")
                 {
-                    int index = int.Parse(commandWords[1]) - 1;
-                    MoveTodoTask(commandWords[2], todoList, index);
+                    
+                    MoveTodoTask(commandWords, todoList);
                 }
                 else if (commandWords[0] == "save")
                 {
@@ -131,6 +132,7 @@ namespace Fas2Uppgift1V2_Grupp1
 
         private static void SetState(string[] commandWords, List<TodoTask> todoList)
         {
+            //TBD try/catch index error
             if (commandWords[2] == "avklarad")
             {
                 todoList[int.Parse(commandWords[1]) - 1].state = "*";
@@ -143,7 +145,7 @@ namespace Fas2Uppgift1V2_Grupp1
 
         private static void SaveListToFile(List<TodoTask> todoList, string file)
         {
-            //TBD try/catch to avoid error
+            //TBD try/catch to avoid file error
             using (StreamWriter sw = new StreamWriter(file)) // opens a stream to file and creates a writer
             {
                 foreach (TodoTask task in todoList)
@@ -153,15 +155,17 @@ namespace Fas2Uppgift1V2_Grupp1
             }
         }
 
-        private static void MoveTodoTask(string direction, List<TodoTask> todoList, int index)
+        private static void MoveTodoTask(string[] commandWords, List<TodoTask> todoList)
         {
             //TBD try/catch
-            if (direction == "down")
+            int index = int.Parse(commandWords[1]) - 1;
+
+            if (commandWords[2] == "down")
             {
                 todoList.Insert(index + 2, todoList[index]);
                 todoList.RemoveAt(index);
             }
-            else if (direction == "up" && index != 0)
+            else if (commandWords[2] == "up" && index != 0)
             {
                 todoList.Insert(index - 1, todoList[index]);
                 todoList.RemoveAt(index + 1);
@@ -204,14 +208,14 @@ namespace Fas2Uppgift1V2_Grupp1
         static void PrintHelp()
         {
             Console.WriteLine("Help commands: \n" +
-                "'load' <filepath> -- loads the todofile \n" +
+                "'load' <filepath> -- loads todo file \n" +
+                "'show' -- shows todo list\n" +
                 "'add <todoTask>' -- add new todo task\n" +
                 "'delete' -- deletes todo from list\n" +
-                "'save'-- saves list to current file\n" +
+                "'save' -- saves list to current file\n" +
                 "'save <filepath>' -- saves list to specific file path\n" +
                 "'move <number> <up/down>' -- moves todo task position in list\n" +
-                "'set <taskNo> <state>' -- set state for todo task\n" +
-                "'show' -- shows todo list"
+                "'set <taskNo> <state>' -- set state for todo task\n"
                 );
         }
         #endregion
