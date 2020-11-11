@@ -68,7 +68,6 @@ namespace Fas2Uppgift1V2_Grupp1
                 }
                 else if (commandWords[0] == "delete")
                 {
-
                     for (int i = 0; i < todoList.Count(); i++)
                     {
                         int listPos = i + 1;
@@ -77,7 +76,6 @@ namespace Fas2Uppgift1V2_Grupp1
                             todoList.RemoveAt(i);
                         }
                     }
-
                 }
                 else if (commandWords[0] == "set")
                 {
@@ -91,14 +89,25 @@ namespace Fas2Uppgift1V2_Grupp1
                     }
                 }
                 else if (commandWords[0] == "move")
-                {
-                    //todoList[int.Parse(commandWords[2]) - 2];
-
+                {                   
                     if (commandWords[2] == "up")
                     {
-                       //todoList[int.Parse(commandWords[2]) - 2];
-                    }
+                        int oldIndex = int.Parse(commandWords[1]) -1;
+                        int newIndex = oldIndex - 1;
 
+                        TodoTask tempTodoTask = todoList[newIndex];
+                        todoList[newIndex] = todoList[oldIndex];
+                        todoList[oldIndex] = tempTodoTask;
+                    }
+                    else if (commandWords[2] == "down")
+                    {
+                        int oldIndex = int.Parse(commandWords[1]) - 1;
+                        int newIndex = oldIndex + 1;
+
+                        TodoTask tempTodoTask = todoList[newIndex];
+                        todoList[newIndex] = todoList[oldIndex];
+                        todoList[oldIndex] = tempTodoTask;
+                    }
                 }
                 else if (command == "save")
                 {
